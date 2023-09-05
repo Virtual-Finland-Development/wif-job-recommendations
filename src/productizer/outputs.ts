@@ -26,7 +26,7 @@ export async function mapJiFResponseToForeignerResponse(jobs: Input<typeof JiFJo
   ).filter((job) => job.municipalityCode !== "");
 
   return parse(ForeignerJobRecommendationsResponse, {
-    identifier: "--", // Would be retrieved from the recommendations endpoint
+    identifier: "-", // Would be retrieved from the recommendations endpoint
     totalCount: jobsWithMunicipalityCodes.length,
     jobs: jobsWithMunicipalityCodes,
   });
