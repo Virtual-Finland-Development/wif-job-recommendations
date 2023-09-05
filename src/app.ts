@@ -2,9 +2,8 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { handleForeignerJobRecommendationsAction } from "./actions/ForeignerJobRecommendations";
 
 export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
-  const requestInputData = JSON.parse(event.body || "{}");
-
   try {
+    const requestInputData = JSON.parse(event.body || "{}");
     const foreignerJobRecommendationsResponse = await handleForeignerJobRecommendationsAction(requestInputData);
     return {
       statusCode: 200,
