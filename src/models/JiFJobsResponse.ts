@@ -27,21 +27,6 @@ export const JifLocation = object({
   country: enumType(["Finland"]),
 });
 
-export const JifCategory = enumType(["ict", "engineering", "academic", "health", "sales", "service", "administration", "finance", "hr", "manufacturing", "management"]);
-export const JifCategoryName = enumType([
-  "ICT",
-  "Engineering",
-  "Academic",
-  "Health",
-  "Marketing & sales",
-  "Service",
-  "Administration",
-  "Finance",
-  "HR",
-  "Manufacturing & construction",
-  "Project management",
-]);
-
 export const JiFJob = object({
   id: string(),
   title: string(),
@@ -73,8 +58,8 @@ export const JiFJob = object({
   clustering: object({
     categories: array(
       object({
-        id: JifCategory,
-        name: JifCategoryName,
+        id: string(),
+        name: string(),
         confidence: number(),
       })
     ),

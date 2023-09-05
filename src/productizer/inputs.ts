@@ -14,31 +14,41 @@ async function mapPreferredMunicipalitiesInputToCityInput(preferredMunicipalitie
   return preferredMunicipalitiesInput.join(",");
 }
 
-async function mapEscoCodesToCategoriesInput(escoCodes: string[]) {
-  const categoriesInput: string[] = [];
+async function pickFirstEscoTitle(escoCodes: string[]) {
   for (const escoCode of escoCodes) {
     const categories = await getJobCategoriesByEscoCode(escoCode);
-    for (const category of categories) {
-      if (categoriesInput.includes(category)) continue;
-      categoriesInput.push(category);
+    if (categories.length > 0) {
+      return categories[0];
     }
   }
-  return categoriesInput.join(",");
+  return "";
 }
 
+/**
+ * Dataspace -> JiF jobs input
+ *
+ * @param foreignerJobRecommendationsRequest
+ * @returns
+ */
 export async function mapForeignerJobRecommendationsRequestToJobsInFinlandRequest(foreignerJobRecommendationsRequest: Input<typeof ForeignerJobRecommendationsRequest>) {
   return parse(JiFJobsRequest, {
     offset: foreignerJobRecommendationsRequest.offset,
     limit: foreignerJobRecommendationsRequest.limit,
-    freeText: foreignerJobRecommendationsRequest.freeText,
-    sort: "title",
-    category: await mapEscoCodesToCategoriesInput(foreignerJobRecommendationsRequest.escoCodes),
+    sort: "schedule.publish",
+    order: -1, // Newest first
+    category: "",
     city: await mapPreferredMunicipalitiesInputToCityInput(foreignerJobRecommendationsRequest.preferredMunicipalities),
-    query: "",
+    query: foreignerJobRecommendationsRequest.freeText || (await pickFirstEscoTitle(foreignerJobRecommendationsRequest.escoCodes)),
     meta: false,
   });
 }
 
+/**
+ * Dataspace -> JiF recommendations input
+ *
+ * @param foreignerJobRecommendationsRequest
+ * @returns
+ */
 export async function mapForeignerJobRecommendationsRequestToJiFRecommendationsRequest(foreignerJobRecommendationsRequest: Input<typeof ForeignerJobRecommendationsRequest>) {
   return parse(JiFRecommendationsRequest, {
     escoCodes: foreignerJobRecommendationsRequest.escoCodes,

@@ -3,6 +3,12 @@ import { ForeignerJobRecommendationsResponse } from "../models/ForeignerJobRecom
 import { JiFJobsResponse } from "../models/JiFJobsResponse";
 import { getMunicipalityCodeWithCityName } from "../repositories/municipalities";
 
+/**
+ * JiF Jobs -> Dataspace output
+ *
+ * @param jobs
+ * @returns
+ */
 export async function mapJiFResponseToForeignerResponse(jobs: Input<typeof JiFJobsResponse>) {
   return parse(ForeignerJobRecommendationsResponse, {
     identifier: "--", // Would be retrieved from the recommendations endpoint
@@ -15,7 +21,7 @@ export async function mapJiFResponseToForeignerResponse(jobs: Input<typeof JiFJo
         municipalityCode: await getMunicipalityCodeWithCityName(job.location.city),
         employer: {
           name: job.employer.name,
-          logoURL: job.employer.imageUrl,
+          logoURL: job.employer.imageUrl || "https://no-logo",
         },
       }))
     ),
