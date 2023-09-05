@@ -9,12 +9,13 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
       statusCode: 200,
       body: JSON.stringify(foreignerJobRecommendationsResponse),
     };
-  } catch (error) {
+  } catch (error: any) {
+    console.error(error);
     return {
       statusCode: 500,
       body: JSON.stringify({
         message: error.message,
-        type: error.type,
+        type: error.type || "Internal Server Error",
       }),
     };
   }

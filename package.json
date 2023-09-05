@@ -2,9 +2,9 @@
   "name": "wif-job-recommendations",
   "version": "1.0.0",
   "description": "Productizer for job recommendations data product",
-  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "deploy": "npm run build && pulumi -C infra up"
   },
   "author": "",
   "license": "MIT",
@@ -12,7 +12,10 @@
     "valibot": "^0.13.1"
   },
   "devDependencies": {
+    "@pulumi/aws": "^6.0.4",
+    "@pulumi/pulumi": "^3.80.0",
     "@types/aws-lambda": "^8.10.119",
-    "@types/node": "^20.5.9"
+    "@types/node": "^20.5.9",
+    "typescript": "^5.2.2"
   }
 }

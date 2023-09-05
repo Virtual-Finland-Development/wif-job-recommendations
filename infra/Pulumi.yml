@@ -1,0 +1,6 @@
+name: wif-job-recommendations
+description: API for status information
+runtime: nodejs
+main: main.ts
+config:
+  aws:region: eu-north-1

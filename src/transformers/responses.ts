@@ -3,7 +3,7 @@ import { ForeignerJobRecommendationsResponse } from "../models/ForeignerJobRecom
 import { JiFJobsResponse } from "../models/JiFJobsResponse";
 import { getMunicipalityCodeWithCityName } from "../repositories/municipalities";
 
-export function mapJiFResponseToForeignerResponse(jobs: Input<typeof JiFJobsResponse>) {
+export async function mapJiFResponseToForeignerResponse(jobs: Input<typeof JiFJobsResponse>) {
   return parse(ForeignerJobRecommendationsResponse, {
     identifier: "--", // Would be retrieved from the recommendations endpoint
     totalCount: jobs.length,
