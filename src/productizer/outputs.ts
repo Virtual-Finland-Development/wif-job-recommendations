@@ -10,10 +10,8 @@ import { getMunicipalityCodeWithCityName } from "../repositories/municipalities"
  * @returns
  */
 export async function mapJiFResponseToForeignerResponse(jobs: Input<typeof JiFJobsResponse>) {
-  return parse(ForeignerJobRecommendationsResponse, {
-    identifier: "--", // Would be retrieved from the recommendations endpoint
-    totalCount: jobs.length,
-    jobs: await Promise.all(
+  const jobsWithMunicipalityCodes = (
+    await Promise.all(
       jobs.map(async (job) => ({
         title: job.title,
         score: 0, // Would be retrieved from the recommendations endpoint
@@ -24,6 +22,12 @@ export async function mapJiFResponseToForeignerResponse(jobs: Input<typeof JiFJo
           logoURL: job.employer.imageUrl || "https://no-logo",
         },
       }))
-    ),
+    )
+  ).filter((job) => job.municipalityCode !== "");
+
+  return parse(ForeignerJobRecommendationsResponse, {
+    identifier: "--", // Would be retrieved from the recommendations endpoint
+    totalCount: jobsWithMunicipalityCodes.length,
+    jobs: jobsWithMunicipalityCodes,
   });
 }
