@@ -1,5 +1,6 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { handleForeignerJobRecommendationsAction } from "./actions/ForeignerJobRecommendations";
+import { logError } from "./utils/logging";
 
 export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
   try {
@@ -10,7 +11,7 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
       body: JSON.stringify(foreignerJobRecommendationsResponse),
     };
   } catch (error: any) {
-    console.error(error);
+    logError(error);
     return {
       statusCode: 500,
       body: JSON.stringify({

@@ -1,4 +1,4 @@
-import { array, boolean, enumType, number, object, string } from "valibot";
+import { array, boolean, enumType, number, object, optional, string } from "valibot";
 
 export const JifLocation = object({
   city: string(),
@@ -56,7 +56,7 @@ export const JiFJob = object({
     careersUrl: string(),
     location: JifLocation,
     source: string(),
-    aliasForId: string(),
+    aliasForId: optional(string()),
   }),
   location: JifLocation,
   source: object({
@@ -92,31 +92,31 @@ export const JiFJob = object({
   status: object({
     reviewStatus: enumType(["unreviewed", "automatic", "human"]),
     hiddenBecause: object({
-      lowSkilledWork: boolean(),
-      finnishRequired: boolean(),
-      notInFinland: boolean(),
-      jobPostingExpired: boolean(),
-      duplicateJobPosting: boolean(),
-      missingInformation: boolean(),
-      wrongCategory: boolean(),
-      inaccurateTranslation: boolean(),
-      userSubmitted: boolean(),
-      deleted: boolean(),
+      lowSkilledWork: optional(boolean()),
+      finnishRequired: optional(boolean()),
+      notInFinland: optional(boolean()),
+      jobPostingExpired: optional(boolean()),
+      duplicateJobPosting: optional(boolean()),
+      missingInformation: optional(boolean()),
+      wrongCategory: optional(boolean()),
+      inaccurateTranslation: optional(boolean()),
+      userSubmitted: optional(boolean()),
+      deleted: optional(boolean()),
     }),
     reportedBecause: object({
-      finnishRequired: number(),
-      notInFinland: number(),
-      jobPostingExpired: number(),
-      duplicateJobPosting: number(),
-      missingInformation: number(),
-      wrongCategory: number(),
-      inaccurateTranslation: number(),
+      finnishRequired: optional(number()),
+      notInFinland: optional(number()),
+      jobPostingExpired: optional(number()),
+      duplicateJobPosting: optional(number()),
+      missingInformation: optional(number()),
+      wrongCategory: optional(number()),
+      inaccurateTranslation: optional(number()),
     }),
     transformations: object({
-      machineTranslated: boolean(),
-      machineHidden: boolean(),
+      machineTranslated: optional(boolean()),
+      machineHidden: optional(boolean()),
     }),
-    publicationStatus: enumType(["pending", "published", "expired", "hidden"]),
+    publicationStatus: optional(enumType(["pending", "published", "expired", "hidden"])),
   }),
 });
 
