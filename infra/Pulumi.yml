@@ -1,5 +1,5 @@
 name: wif-job-recommendations
-description: API for status information
+description: Productizer API for job recommendations
 runtime: nodejs
 main: main.ts
 config:
