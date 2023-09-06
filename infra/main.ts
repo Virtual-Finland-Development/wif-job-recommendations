@@ -1,6 +1,6 @@
 import * as aws from "@pulumi/aws";
 import * as pulumi from "@pulumi/pulumi";
-import { getResourceName, tags } from "./setup";
+import { getResourceName, organization, stage, tags } from "./setup";
 
 const lambdaRole = new aws.iam.Role(getResourceName("lambdaRole"), {
   assumeRolePolicy: aws.iam.assumeRolePolicyForPrincipal({ Service: "lambda.amazonaws.com" }),
@@ -13,6 +13,10 @@ new aws.iam.RolePolicyAttachment(getResourceName("lambdaRolePolicyAttachment"), 
   policyArn: aws.iam.ManagedPolicies.AWSLambdaBasicExecutionRole,
 });
 
+// Retrieve codesets stack reference, service url output
+const codesetsStack = new pulumi.StackReference(`${organization}/codesets/${stage}`);
+const codesetsServiceBaseUrl = codesetsStack.getOutput("url");
+
 const lambda = new aws.lambda.Function(getResourceName("lambdaFunction"), {
   runtime: aws.lambda.Runtime.NodeJS18dX,
   role: lambdaRole.arn,
@@ -24,6 +28,11 @@ const lambda = new aws.lambda.Function(getResourceName("lambdaFunction"), {
     node_modules: new pulumi.asset.FileArchive("../node_modules"),
   }),
   tags,
+  environment: {
+    variables: {
+      CODESETS_SERVICE_BASE_URL: pulumi.interpolate`${codesetsServiceBaseUrl}`,
+    },
+  },
 });
 
 const functionUrl = new aws.lambda.FunctionUrl(getResourceName("lambdaFunctionUrl"), {
