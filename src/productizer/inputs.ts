@@ -38,7 +38,7 @@ export async function mapForeignerJobRecommendationsRequestToJobsInFinlandReques
     order: -1, // Newest first
     category: "",
     city: await mapPreferredMunicipalitiesInputToCityInput(foreignerJobRecommendationsRequest.preferredMunicipalities),
-    query: foreignerJobRecommendationsRequest.freeText || (await pickFirstEscoTitle(foreignerJobRecommendationsRequest.escoCodes)),
+    query: foreignerJobRecommendationsRequest.freeText, // || (await pickFirstEscoTitle(foreignerJobRecommendationsRequest.escoCodes)),
     meta: false,
   });
 }
