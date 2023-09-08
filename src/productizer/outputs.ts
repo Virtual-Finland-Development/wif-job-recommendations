@@ -21,7 +21,7 @@ export async function mapJiFResponseToForeignerResponse(jobs: Input<typeof JiFJo
         municipalityCode: await getMunicipalityCodeWithCityName(job.location.city),
         employer: {
           name: job.employer.name,
-          logoURL: job.employer.imageUrl || "https://no-logo",
+          logoURL: job.employer.imageUrl || "https://no-employer-logo",
         },
       }))
     )
@@ -57,7 +57,7 @@ export async function mapJiFRecommendationsResponseToForeignerResponse(
     }))
   );
 
-  const filteredJobs = mappedJobs.reduce((acc, job) => {
+  let filteredJobs = mappedJobs.reduce((acc, job) => {
     // Filter by uniqueness
     let isVisible = !acc.find((accJob) => accJob.advertisementURL === job.advertisementURL);
 
@@ -72,6 +72,13 @@ export async function mapJiFRecommendationsResponseToForeignerResponse(
     }
     return acc;
   }, [] as typeof mappedJobs);
+
+  // Productizer-side pagination
+  if (request.offset && request.limit) {
+    filteredJobs = filteredJobs.slice(request.offset, request.offset + request.limit);
+  } else if (request.limit) {
+    filteredJobs = filteredJobs.slice(0, request.limit);
+  }
 
   return parse(ForeignerJobRecommendationsResponse, {
     identifier: response.id,

@@ -46,7 +46,7 @@ export async function mapForeignerJobRecommendationsRequestToJiFRecommendationsR
     escoOccupations: foreignerJobRecommendationsRequest.escoCodes,
     isEEACitizen: foreignerJobRecommendationsRequest.citizenshipArea === "EEA",
     city: await mapPreferredMunicipalitiesInputToCityInput(foreignerJobRecommendationsRequest.preferredMunicipalities),
-    offset: foreignerJobRecommendationsRequest.offset, // Undocumented but works
-    limit: foreignerJobRecommendationsRequest.limit, // Undocumented but works
+    // offset: foreignerJobRecommendationsRequest.offset, // Undocumented but works?, but as there's filtering on the produtizer side: its disabled
+    // limit: foreignerJobRecommendationsRequest.limit, // Undocumented but works..
   });
 }
