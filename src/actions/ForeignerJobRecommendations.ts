@@ -8,13 +8,12 @@ export async function handleForeignerJobRecommendationsAction(requestInputData: 
   // Map the request input data to jobs in Finland request
   const foreignerJobRecommendationsRequest = parse(ForeignerJobRecommendationsRequest, requestInputData);
   const jobsInFinlandRequest = await mapForeignerJobRecommendationsRequestToJiFRecommendationsRequest(foreignerJobRecommendationsRequest);
-  console.debug(jobsInFinlandRequest);
 
   // Call jobs in Finland API
   const jobsInFinlandResponse = await retrieveJobRecommendationsFromFinland(jobsInFinlandRequest);
 
   // Map the response from jobs in Finland to the foreigner job recommendations response
-  const foreignerJobRecommendationsResponse = await mapJiFRecommendationsResponseToForeignerResponse(jobsInFinlandResponse);
+  const foreignerJobRecommendationsResponse = await mapJiFRecommendationsResponseToForeignerResponse(foreignerJobRecommendationsRequest, jobsInFinlandResponse);
 
   return foreignerJobRecommendationsResponse;
 }
