@@ -1,9 +1,15 @@
-import { merge, object, string } from "valibot";
+import { array, merge, number, object, string } from "valibot";
 import { JiFJob } from "./JiFJobsResponse";
 
-export const JiFRecommendationsResponse = merge([
+export const JiFRecommendationsResponseRecord = merge([
   JiFJob,
   object({
-    score: string(),
+    score: number(),
   }),
 ]);
+
+export const JiFRecommendationsResponse = object({
+  id: string(),
+  total: number(),
+  records: array(JiFRecommendationsResponseRecord),
+});

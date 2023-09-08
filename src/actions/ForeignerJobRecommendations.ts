@@ -1,20 +1,20 @@
 import { parse } from "valibot";
 import { ForeignerJobRecommendationsRequest } from "../models/ForeignerJobRecommendationsRequest";
-import { mapForeignerJobRecommendationsRequestToJobsInFinlandRequest } from "../productizer/inputs";
-import { mapJiFResponseToForeignerResponse } from "../productizer/outputs";
-import { getJobsInFinland } from "../services/JobsInFinland";
+import { mapForeignerJobRecommendationsRequestToJiFRecommendationsRequest } from "../productizer/inputs";
+import { mapJiFRecommendationsResponseToForeignerResponse } from "../productizer/outputs";
+import { retrieveJobRecommendationsFromFinland } from "../services/JobsInFinland";
 
 export async function handleForeignerJobRecommendationsAction(requestInputData: any) {
   // Map the request input data to jobs in Finland request
   const foreignerJobRecommendationsRequest = parse(ForeignerJobRecommendationsRequest, requestInputData);
-  const jobsInFinlandRequest = await mapForeignerJobRecommendationsRequestToJobsInFinlandRequest(foreignerJobRecommendationsRequest);
-  console.log(jobsInFinlandRequest);
+  const jobsInFinlandRequest = await mapForeignerJobRecommendationsRequestToJiFRecommendationsRequest(foreignerJobRecommendationsRequest);
+  console.debug(jobsInFinlandRequest);
 
   // Call jobs in Finland API
-  const jobsInFinlandResponse = await getJobsInFinland(jobsInFinlandRequest);
+  const jobsInFinlandResponse = await retrieveJobRecommendationsFromFinland(jobsInFinlandRequest);
 
   // Map the response from jobs in Finland to the foreigner job recommendations response
-  const foreignerJobRecommendationsResponse = await mapJiFResponseToForeignerResponse(jobsInFinlandResponse);
+  const foreignerJobRecommendationsResponse = await mapJiFRecommendationsResponseToForeignerResponse(jobsInFinlandResponse);
 
   return foreignerJobRecommendationsResponse;
 }

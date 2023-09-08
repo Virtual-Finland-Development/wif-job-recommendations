@@ -3,25 +3,16 @@ import { ForeignerJobRecommendationsRequest } from "../models/ForeignerJobRecomm
 import { JiFJobsRequest } from "../models/JiFJobsRequest";
 import { JiFRecommendationsRequest } from "../models/JiFRecommendationsRequest";
 import { getCityNameWithMonicipalityCode } from "../repositories/municipalities";
-import { getJobCategoriesByEscoCode } from "../repositories/occupations";
 
-async function mapPreferredMunicipalitiesInputToCityInput(preferredMunicipalities: string[]) {
+async function mapPreferredMunicipalitiesInputToCityInput(preferredMunicipalities?: string[]) {
+  if (!preferredMunicipalities) return "";
+
   const preferredMunicipalitiesInput = [];
   for (const preferredMunicipality of preferredMunicipalities) {
     const cityName = await getCityNameWithMonicipalityCode(preferredMunicipality);
     if (cityName) preferredMunicipalitiesInput.push(cityName);
   }
   return preferredMunicipalitiesInput.join(",");
-}
-
-async function pickFirstEscoTitle(escoCodes: string[]) {
-  for (const escoCode of escoCodes) {
-    const categories = await getJobCategoriesByEscoCode(escoCode);
-    if (categories.length > 0) {
-      return categories[0];
-    }
-  }
-  return "";
 }
 
 /**
@@ -38,7 +29,7 @@ export async function mapForeignerJobRecommendationsRequestToJobsInFinlandReques
     order: -1, // Newest first
     category: "",
     city: await mapPreferredMunicipalitiesInputToCityInput(foreignerJobRecommendationsRequest.preferredMunicipalities),
-    query: foreignerJobRecommendationsRequest.freeText, // || (await pickFirstEscoTitle(foreignerJobRecommendationsRequest.escoCodes)),
+    query: foreignerJobRecommendationsRequest.freeText,
     meta: false,
   });
 }
@@ -51,7 +42,11 @@ export async function mapForeignerJobRecommendationsRequestToJobsInFinlandReques
  */
 export async function mapForeignerJobRecommendationsRequestToJiFRecommendationsRequest(foreignerJobRecommendationsRequest: Input<typeof ForeignerJobRecommendationsRequest>) {
   return parse(JiFRecommendationsRequest, {
-    escoCodes: foreignerJobRecommendationsRequest.escoCodes,
-    isEuCitizen: true, // @TODO
+    //id: "foreigner", // @TODO: what is the profile identifier, is it required? Apparently not.
+    escoOccupations: foreignerJobRecommendationsRequest.escoCodes,
+    isEEACitizen: foreignerJobRecommendationsRequest.citizenshipArea === "EEA",
+    city: await mapPreferredMunicipalitiesInputToCityInput(foreignerJobRecommendationsRequest.preferredMunicipalities),
+    offset: foreignerJobRecommendationsRequest.offset, // Undocumented but works
+    limit: foreignerJobRecommendationsRequest.limit, // Undocumented but works
   });
 }
