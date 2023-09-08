@@ -57,7 +57,7 @@ export async function mapJiFRecommendationsResponseToForeignerResponse(response:
 
   return parse(ForeignerJobRecommendationsResponse, {
     identifier: response.id,
-    totalCount: jobsWithMunicipalityCodes.length,
+    totalCount: response.total,
     jobs: jobsWithMunicipalityCodes,
   });
 }
