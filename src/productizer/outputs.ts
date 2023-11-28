@@ -19,7 +19,7 @@ export async function mapJiFRecommendationsResponseToForeignerResponse(
       title: job.title,
       score: job.score,
       advertisementURL: job.externalUrl,
-      municipalityCode: await getMunicipalityCodeWithCityName(job.location.city),
+      municipalityCode: await getMunicipalityCodeWithCityName(job.location.city || job.employer.location.city),
       employer: {
         name: job.employer.name,
         logoURL: job.employer.imageUrl || "https://no-employer-logo",
@@ -28,17 +28,23 @@ export async function mapJiFRecommendationsResponseToForeignerResponse(
   );
 
   let filteredJobs = mappedJobs.reduce((acc, job) => {
-    // Filter by uniqueness
-    let isVisible = !acc.find((accJob) => accJob.advertisementURL === job.advertisementURL);
+    let isVisible = true;
+
+    // Filter out jobs without municipality code
+    if (isVisible && !job.municipalityCode) {
+      isVisible = false;
+    }
 
     // Filter by free text phrase
     if (isVisible && request.freeText) {
-      const searchPhrase = request.freeText.toLowerCase();
-      isVisible = job.title.toLowerCase().includes(searchPhrase) || job.employer.name.toLowerCase().includes(searchPhrase);
+      const searchPhrase = request.freeText.toLocaleLowerCase();
+      isVisible = job.title.toLocaleLowerCase().includes(searchPhrase) || job.employer.name.toLocaleLowerCase().includes(searchPhrase);
     }
 
     if (isVisible) {
-      acc.push(job);
+      if (!acc.find((accJob) => accJob.advertisementURL === job.advertisementURL)) {
+        acc.push(job);
+      }
     }
     return acc;
   }, [] as typeof mappedJobs);
