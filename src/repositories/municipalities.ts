@@ -15,7 +15,7 @@ export async function getCityNameWithMonicipalityCode(municipalityCode: string):
 export async function getMunicipalityCodeWithCityName(cityName: string): Promise<string> {
   const municipalities = await getMunicipalities();
   const municipality = municipalities.find((municipality: any) =>
-    municipality.Selitteet.find((description: any) => description.Kielikoodi === "fi" && description.Teksti === cityName)
+    municipality.Selitteet.find((description: any) => description.Kielikoodi === "fi" && description.Teksti.toLocaleLowerCase() === cityName.toLocaleLowerCase())
   );
   if (municipality) {
     return municipality.Koodi;

@@ -1,33 +1,7 @@
 import { array, boolean, enumType, number, object, optional, string } from "valibot";
+import { JifLocation } from "./JifLocation";
 
-export const JifLocation = object({
-  city: string(),
-  area: enumType([
-    "Päijät-Häme",
-    "South Ostrobothnia",
-    "Kanta-Häme",
-    "South Karelia",
-    "Kymenlaakso",
-    "Uusimaa",
-    "Lapland",
-    "North Karelia",
-    "South Savo",
-    "North Savo",
-    "Kainuu",
-    "Central Finland",
-    "Ostrobothnia",
-    "Satakunta",
-    "Southwest Finland",
-    "Central Ostrobothnia",
-    "North Ostrobothnia",
-    "Pirkanmaa",
-    "Åland",
-    "Unknown",
-  ]),
-  country: enumType(["Finland"]),
-});
-
-export const JiFJob = object({
+export const JifJob = object({
   id: string(),
   title: string(),
   description: string(),
@@ -104,5 +78,3 @@ export const JiFJob = object({
     publicationStatus: optional(enumType(["pending", "published", "expired", "hidden"])),
   }),
 });
-
-export const JiFJobsResponse = array(JiFJob);

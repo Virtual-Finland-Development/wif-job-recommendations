@@ -1,3 +1,5 @@
+import { ExternalApiRequestException } from "../utils/exceptions";
+
 const CODESETS_SERVICE_BASE_URL = process.env.CODESETS_SERVICE_BASE_URL;
 const serviceStore = {
   Municipalities: null,
@@ -10,9 +12,13 @@ async function retrieveCodesetsResource(resourceName: keyof typeof serviceStore)
   }
 
   if (serviceStore[resourceName] === null) {
-    const response = await fetch(`${CODESETS_SERVICE_BASE_URL}/resources/${resourceName}`);
-    const resource = await response.json();
-    serviceStore[resourceName] = resource;
+    try {
+      const response = await fetch(`${CODESETS_SERVICE_BASE_URL}/resources/${resourceName}`);
+      const resource = await response.json();
+      serviceStore[resourceName] = resource;
+    } catch (error: any) {
+      throw new ExternalApiRequestException(`Failed to fetch ${resourceName} from codesets service`, error);
+    }
   }
   return serviceStore[resourceName];
 }

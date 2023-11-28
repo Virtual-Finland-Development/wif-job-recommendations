@@ -5,5 +5,8 @@ export function logError(error: any) {
     console.error(JSON.stringify(error, null, 4));
   } else {
     console.error(error);
+    if (typeof error === "object" && error?.cause) {
+      logError(error.cause);
+    }
   }
 }
