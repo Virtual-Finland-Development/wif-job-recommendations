@@ -1,4 +1,5 @@
 import { Input, parse } from "valibot";
+import { isLessOrEqualThanVersion } from "../app/versions";
 import { ForeignerJobRecommendationsRequest } from "../models/ForeignerJobRecommendationsRequest";
 import { ForeignerJobRecommendationsResponse } from "../models/ForeignerJobRecommendationsResponse";
 import { JifApiRecommendationsResponse } from "../models/JifApiRecommendationsResponse";
@@ -11,27 +12,31 @@ import { getMunicipalityCodeWithCityName } from "../repositories/municipalities"
  * @returns
  */
 export async function mapJiFRecommendationsResponseToForeignerResponse(
+  dataProductVersion: number,
   request: Input<typeof ForeignerJobRecommendationsRequest>,
   response: Input<typeof JifApiRecommendationsResponse>
 ) {
   let mappedJobs = await Promise.all(
-    response.records.map(async (job) => ({
-      title: job.title,
-      score: job.score,
-      advertisementURL: job.externalUrl,
-      municipalityCode: await getMunicipalityCodeWithCityName(job.location.city || job.employer.location.city),
-      employer: {
-        name: job.employer.name,
-        logoURL: job.employer.imageUrl || "https://no-employer-logo",
-      },
-    }))
+    response.records.map(async (job) => {
+      const city = isLessOrEqualThanVersion(dataProductVersion, "1.1") ? job.location.city || job.employer.location.city : job.location.city;
+      return {
+        title: job.title,
+        score: job.score,
+        advertisementURL: job.externalUrl,
+        municipalityCode: await getMunicipalityCodeWithCityName(city),
+        employer: {
+          name: job.employer.name,
+          logoURL: job.employer.imageUrl || "https://no-employer-logo",
+        },
+      };
+    })
   );
 
   let filteredJobs = mappedJobs.reduce((acc, job) => {
     let isVisible = true;
 
-    // Filter out jobs without municipality code
-    if (isVisible && !job.municipalityCode) {
+    // Filter out jobs without municipality code (<= v1.1)
+    if (isVisible && isLessOrEqualThanVersion(dataProductVersion, "1.1") && !job.municipalityCode) {
       isVisible = false;
     }
 

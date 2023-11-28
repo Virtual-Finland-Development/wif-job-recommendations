@@ -1,4 +1,4 @@
-import { ExternalApiRequestException } from "../utils/exceptions";
+import { ExternalApiRequestException } from "../app/exceptions";
 
 const CODESETS_SERVICE_BASE_URL = process.env.CODESETS_SERVICE_BASE_URL;
 const serviceStore = {

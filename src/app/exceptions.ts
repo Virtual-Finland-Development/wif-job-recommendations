@@ -13,8 +13,9 @@ abstract class BaseException extends Error {
 export class ExternalApiRequestException extends BaseException {
   type = "ExternalApiRequestException";
   code = 500;
+}
 
-  constructor(message: any, cause?: { cause?: Error } | Error) {
-    super(message, cause);
-  }
+export class BadRequestExcetion extends BaseException {
+  type = "BadRequestExcetion";
+  code = 400;
 }

@@ -1,8 +1,8 @@
 import { parse } from "valibot";
+import { ExternalApiRequestException } from "../app/exceptions";
+import { formUrlWithParams } from "../app/url-helpers";
 import { JifApiRecommendationsRequestBody, JifApiRecommendationsRequestQueryParams } from "../models/JifApiRecommendationsRequest";
 import { JifApiRecommendationsResponse } from "../models/JifApiRecommendationsResponse";
-import { ExternalApiRequestException } from "../utils/exceptions";
-import { formUrlWithParams } from "../utils/url-helpers";
 
 const jobsInFinlandEndpoint = process.env.JOBS_IN_FINLAND_ENDPOINT || "https://beta.jobs-in-finland.com/api";
 
