@@ -1,8 +1,12 @@
-type DataProduct = {
+export enum DataProductName {
+  ForeignerJobRecommendatations = "/Employment/ForeignerJobRecommendatations",
+  ForeignerJobRecommendations = "/Employment/ForeignerJobRecommendations",
+  Default = "/Employment/ForeignerJobRecommendations",
+}
+
+export type DataProduct = {
   version: number;
   versionText: string;
-  dataProduct: string;
+  dataProductName: DataProductName;
   fullDataProduct: string;
 };
-
-export default DataProduct;

@@ -1,13 +1,7 @@
 import { APIGatewayProxyEventV2 } from "aws-lambda";
-import DataProduct from "../models/DataProduct";
+import { DataProduct, DataProductName } from "../models/DataProduct";
 import { BadRequestExcetion } from "./exceptions";
 import { transformVersionToNumber } from "./versions";
-
-export enum DataProductName {
-  ForeignerJobRecommendatations = "/Employment/ForeignerJobRecommendatations",
-  ForeignerJobRecommendations = "/Employment/ForeignerJobRecommendations",
-  Default = "/Employment/ForeignerJobRecommendations",
-}
 
 /**
  *
@@ -35,12 +29,12 @@ export function parseDataProductFromPath(fullDataProduct: string): DataProduct {
     throw new BadRequestExcetion("Invalid data product path format");
   }
 
-  const dataProduct = fullDataProduct.replace(`_v${dataProductVersionText}`, "");
+  const dataProductName = fullDataProduct.replace(`_v${dataProductVersionText}`, "") as DataProductName;
 
   return {
     version: dataProductVersion,
     versionText: dataProductVersionText,
-    dataProduct,
+    dataProductName,
     fullDataProduct,
   };
 }

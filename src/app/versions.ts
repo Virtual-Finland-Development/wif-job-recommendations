@@ -1,4 +1,4 @@
-import { DataProductName } from "./data-products";
+import { DataProductName } from "../models/DataProduct";
 
 /**
  *
@@ -41,7 +41,7 @@ export function transformVersionToNumber(versionString: string | number): number
 type ComparisonArgument =
   | {
       version: number | string;
-      dataProduct: string;
+      dataProductName: DataProductName;
     }
   | string
   | number;
@@ -54,7 +54,7 @@ function resolveCompareArgument(dataProduct: ComparisonArgument, dataProductName
     };
   }
   return {
-    dataProduct: dataProduct.dataProduct,
+    dataProduct: dataProduct.dataProductName,
     version: transformVersionToNumber(dataProduct.version),
   };
 }

@@ -1,5 +1,5 @@
 import { parse } from "valibot";
-import DataProduct from "../models/DataProduct";
+import { DataProduct } from "../models/DataProduct";
 import { ForeignerJobRecommendationsRequest } from "../models/ForeignerJobRecommendationsRequest";
 import { mapForeignerJobRecommendationsRequestToJiFRecommendationsRequest } from "../productizer/inputs";
 import { mapJiFRecommendationsResponseToForeignerResponse } from "../productizer/outputs";

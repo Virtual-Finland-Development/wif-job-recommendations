@@ -1,7 +1,6 @@
 import { Input, parse } from "valibot";
-import { DataProductName } from "../app/data-products";
 import { isGreaterOrEqualThanVersion, isLessOrEqualThanVersion } from "../app/versions";
-import DataProduct from "../models/DataProduct";
+import { DataProduct, DataProductName } from "../models/DataProduct";
 import { ForeignerJobRecommendationsRequest } from "../models/ForeignerJobRecommendationsRequest";
 import { ForeignerJobRecommendationsResponse } from "../models/ForeignerJobRecommendationsResponse";
 import { JifApiRecommendationsResponse } from "../models/JifApiRecommendationsResponse";
