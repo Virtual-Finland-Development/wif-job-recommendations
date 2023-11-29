@@ -1,5 +1,5 @@
 import { Input, parse } from "valibot";
-import { isLessOrEqualThanVersion } from "../app/versions";
+import { isEqualToVersion, isGreaterOrEqualThanVersion, isLessOrEqualThanVersion } from "../app/versions";
 import { ForeignerJobRecommendationsRequest } from "../models/ForeignerJobRecommendationsRequest";
 import { ForeignerJobRecommendationsResponse } from "../models/ForeignerJobRecommendationsResponse";
 import { JifApiRecommendationsResponse } from "../models/JifApiRecommendationsResponse";
@@ -19,6 +19,7 @@ export async function mapJiFRecommendationsResponseToForeignerResponse(
   let mappedJobs = await Promise.all(
     response.records.map(async (job) => {
       const city = isLessOrEqualThanVersion(dataProductVersion, "1.1") ? job.location.city || job.employer.location.city : job.location.city;
+      const employerLogoUrlHasNoFallback = isEqualToVersion(dataProductVersion, "0.2") || isGreaterOrEqualThanVersion(dataProductVersion, "1.3");
       return {
         title: job.title,
         score: job.score,
@@ -26,7 +27,7 @@ export async function mapJiFRecommendationsResponseToForeignerResponse(
         municipalityCode: await getMunicipalityCodeWithCityName(city),
         employer: {
           name: job.employer.name,
-          logoURL: job.employer.imageUrl || "https://no-employer-logo",
+          logoURL: job.employer.imageUrl || (employerLogoUrlHasNoFallback ? null : "https://no-employer-logo"),
         },
       };
     })
