@@ -1,13 +1,13 @@
-import { array, number, object, string } from "valibot";
+import { array, nullable, number, object, string } from "valibot";
 
 export const ForeignerJobRecommendation = object({
   title: string(),
   score: number(),
   advertisementURL: string(),
-  municipalityCode: string(),
+  municipalityCode: nullable(string()),
   employer: object({
     name: string(),
-    logoURL: string(),
+    logoURL: nullable(string()),
   }),
 });
 
