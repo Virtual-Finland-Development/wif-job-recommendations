@@ -1,5 +1,6 @@
 import { Input, parse } from "valibot";
-import { isEqualToVersion, isGreaterOrEqualThanVersion, isLessOrEqualThanVersion } from "../app/versions";
+import { isGreaterOrEqualThanVersion, isLessOrEqualThanVersion } from "../app/versions";
+import DataProduct from "../models/DataProduct";
 import { ForeignerJobRecommendationsRequest } from "../models/ForeignerJobRecommendationsRequest";
 import { ForeignerJobRecommendationsResponse } from "../models/ForeignerJobRecommendationsResponse";
 import { JifApiRecommendationsResponse } from "../models/JifApiRecommendationsResponse";
@@ -12,14 +13,16 @@ import { getMunicipalityCodeWithCityName } from "../repositories/municipalities"
  * @returns
  */
 export async function mapJiFRecommendationsResponseToForeignerResponse(
-  dataProductVersion: number,
+  dataProduct: DataProduct,
   request: Input<typeof ForeignerJobRecommendationsRequest>,
   response: Input<typeof JifApiRecommendationsResponse>
 ) {
   let mappedJobs = await Promise.all(
     response.records.map(async (job) => {
-      const city = isLessOrEqualThanVersion(dataProductVersion, "1.1") ? job.location.city || job.employer.location.city : job.location.city;
-      const employerLogoUrlHasNoFallback = isEqualToVersion(dataProductVersion, "0.2") || isGreaterOrEqualThanVersion(dataProductVersion, "1.3");
+      const city = isLessOrEqualThanVersion(dataProduct, "1.1", "/Employment/ForeignerJobRecommendatations") ? job.location.city || job.employer.location.city : job.location.city;
+      const employerLogoUrlHasNoFallback =
+        isGreaterOrEqualThanVersion(dataProduct, "0.2", "/Employment/ForeignerJobRecommendations") ||
+        isGreaterOrEqualThanVersion(dataProduct, "1.3", "/Employment/ForeignerJobRecommendatations");
       return {
         title: job.title,
         score: job.score,
@@ -37,7 +40,7 @@ export async function mapJiFRecommendationsResponseToForeignerResponse(
     let isVisible = true;
 
     // Filter out jobs without municipality code (<= v1.1)
-    if (isVisible && isLessOrEqualThanVersion(dataProductVersion, "1.1") && !job.municipalityCode) {
+    if (isVisible && isLessOrEqualThanVersion(dataProduct, "1.1", "/Employment/ForeignerJobRecommendatations") && !job.municipalityCode) {
       isVisible = false;
     }
 

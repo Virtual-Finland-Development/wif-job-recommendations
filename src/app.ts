@@ -1,14 +1,14 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import { ValiError } from "valibot";
 import { handleForeignerJobRecommendationsAction } from "./actions/ForeignerJobRecommendations";
+import { parseDataProductFromEvent } from "./app/data-products";
 import { logError } from "./app/logging";
-import { parseDataProductVersion } from "./app/versions";
 
 export async function handler(event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> {
   try {
-    const dataProductVersion = parseDataProductVersion(event);
+    const dataProduct = parseDataProductFromEvent(event);
     const requestInputData = JSON.parse(event.body || "{}");
-    const foreignerJobRecommendationsResponse = await handleForeignerJobRecommendationsAction(dataProductVersion, requestInputData);
+    const foreignerJobRecommendationsResponse = await handleForeignerJobRecommendationsAction(dataProduct, requestInputData);
 
     return {
       statusCode: 200,

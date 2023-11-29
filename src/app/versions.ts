@@ -1,5 +1,4 @@
-import { APIGatewayProxyEventV2 } from "aws-lambda";
-import { BadRequestExcetion } from "./exceptions";
+import DataProduct from "../models/DataProduct";
 
 /**
  *
@@ -15,29 +14,6 @@ function ensureInteger(value: number, defaultValue?: number): number {
     throw new Error(`Value ${value} is not an integer`);
   }
   return value;
-}
-
-/**
- *
- * @param event
- * @returns
- */
-export function parseDataProductVersion(event: APIGatewayProxyEventV2): number {
-  const dataProductVersionText = parseDataProductVersionText(event.requestContext.http.path);
-  if (!dataProductVersionText) {
-    throw new BadRequestExcetion("Missing data product version from the URI path");
-  }
-
-  return transformVersionToNumber(dataProductVersionText);
-}
-
-/**
- *
- * @param path
- * @returns
- */
-export function parseDataProductVersionText(path: string) {
-  return path.match(/\/Employment\/ForeignerJobRecommendations_v([\d\.]+)/)?.[1] || path.match(/\/Employment\/ForeignerJobRecommendatations_v([\d\.]+)/)?.[1];
 }
 
 /**
@@ -59,22 +35,22 @@ export function transformVersionToNumber(versionString: string | number): number
   return dataProductVersion;
 }
 
-export function isGreaterThanVersion(version: string | number, versionToCompare: string | number): boolean {
-  return transformVersionToNumber(version) > transformVersionToNumber(versionToCompare);
+export function isGreaterThanVersion(dataProduct: DataProduct, versionToCompare: string | number, dataProductName?: string): boolean {
+  return dataProduct.version > transformVersionToNumber(versionToCompare) && (!dataProductName || dataProduct.dataProduct === dataProductName);
 }
 
-export function isGreaterOrEqualThanVersion(version: string | number, versionToCompare: string | number): boolean {
-  return transformVersionToNumber(version) >= transformVersionToNumber(versionToCompare);
+export function isGreaterOrEqualThanVersion(dataProduct: DataProduct, versionToCompare: string | number, dataProductName?: string): boolean {
+  return dataProduct.version >= transformVersionToNumber(versionToCompare) && (!dataProductName || dataProduct.dataProduct === dataProductName);
 }
 
-export function isLessThanVersion(version: string | number, versionToCompare: string | number): boolean {
-  return transformVersionToNumber(version) < transformVersionToNumber(versionToCompare);
+export function isLessThanVersion(dataProduct: DataProduct, versionToCompare: string | number, dataProductName?: string): boolean {
+  return dataProduct.version < transformVersionToNumber(versionToCompare) && (!dataProductName || dataProduct.dataProduct === dataProductName);
 }
 
-export function isLessOrEqualThanVersion(version: string | number, versionToCompare: string | number): boolean {
-  return transformVersionToNumber(version) <= transformVersionToNumber(versionToCompare);
+export function isLessOrEqualThanVersion(dataProduct: DataProduct, versionToCompare: string | number, dataProductName?: string): boolean {
+  return dataProduct.version <= transformVersionToNumber(versionToCompare) && (!dataProductName || dataProduct.dataProduct === dataProductName);
 }
 
-export function isEqualToVersion(version: string | number, versionToCompare: string | number): boolean {
-  return transformVersionToNumber(version) === transformVersionToNumber(versionToCompare);
+export function isEqualToVersion(dataProduct: DataProduct, versionToCompare: string | number, dataProductName?: string): boolean {
+  return dataProduct.version === transformVersionToNumber(versionToCompare) && (!dataProductName || dataProduct.dataProduct === dataProductName);
 }
