@@ -23,14 +23,21 @@ function ensureInteger(value: number, defaultValue?: number): number {
  * @returns
  */
 export function parseDataProductVersion(event: APIGatewayProxyEventV2): number {
-  const dataProductVersionText = event.requestContext.http.path.match(/\/Employment\/ForeignerJobRecommendatations_v([\d\.]+)/)?.[1];
-
+  const dataProductVersionText = parseDataProductVersionText(event.requestContext.http.path);
   if (!dataProductVersionText) {
-    console.log(event);
     throw new BadRequestExcetion("Missing data product version from the URI path");
   }
 
   return transformVersionToNumber(dataProductVersionText);
+}
+
+/**
+ *
+ * @param path
+ * @returns
+ */
+export function parseDataProductVersionText(path: string) {
+  return path.match(/\/Employment\/ForeignerJobRecommendations_v([\d\.]+)/)?.[1] || path.match(/\/Employment\/ForeignerJobRecommendatations_v([\d\.]+)/)?.[1];
 }
 
 /**
