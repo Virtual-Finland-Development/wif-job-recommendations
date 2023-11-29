@@ -1,4 +1,4 @@
-import DataProduct from "../models/DataProduct";
+import { DataProductName } from "./data-products";
 
 /**
  *
@@ -35,22 +35,97 @@ export function transformVersionToNumber(versionString: string | number): number
   return dataProductVersion;
 }
 
-export function isGreaterThanVersion(dataProduct: DataProduct, versionToCompare: string | number, dataProductName?: string): boolean {
-  return dataProduct.version > transformVersionToNumber(versionToCompare) && (!dataProductName || dataProduct.dataProduct === dataProductName);
+/**
+ * Comparison argument can be either a string or a number, or an object with version and data product name
+ */
+type ComparisonArgument =
+  | {
+      version: number | string;
+      dataProduct: string;
+    }
+  | string
+  | number;
+
+function resolveCompareArgument(dataProduct: ComparisonArgument, dataProductName: DataProductName = DataProductName.Default) {
+  if (typeof dataProduct === "string" || typeof dataProduct === "number") {
+    return {
+      dataProduct: dataProductName,
+      version: transformVersionToNumber(dataProduct),
+    };
+  }
+  return {
+    dataProduct: dataProduct.dataProduct,
+    version: transformVersionToNumber(dataProduct.version),
+  };
 }
 
-export function isGreaterOrEqualThanVersion(dataProduct: DataProduct, versionToCompare: string | number, dataProductName?: string): boolean {
-  return dataProduct.version >= transformVersionToNumber(versionToCompare) && (!dataProductName || dataProduct.dataProduct === dataProductName);
+function resolveComparisonArguments(dataProduct: ComparisonArgument, comparison: ComparisonArgument, comparisonDataProductName?: DataProductName) {
+  const { dataProduct: dataProduct1, version: version1 } = resolveCompareArgument(dataProduct);
+  const { dataProduct: dataProduct2, version: version2 } = resolveCompareArgument(comparison, comparisonDataProductName);
+  return {
+    dataProduct1,
+    version1,
+    dataProduct2,
+    version2,
+  };
 }
 
-export function isLessThanVersion(dataProduct: DataProduct, versionToCompare: string | number, dataProductName?: string): boolean {
-  return dataProduct.version < transformVersionToNumber(versionToCompare) && (!dataProductName || dataProduct.dataProduct === dataProductName);
+/**
+ *
+ * @param dataProduct argument can be a string representing the version, number as calculated version value or an object with version and data product name
+ * @param comparison argument can be a string representing the version, number as calculated version value or an object with version and data product name
+ * @param comparisonDataProductName optional data product name to use for comparison if comparison is a string or number
+ * @returns
+ */
+export function isGreaterThanVersion(dataProduct: ComparisonArgument, comparison: ComparisonArgument, comparisonDataProductName?: DataProductName): boolean {
+  const { dataProduct1, version1, dataProduct2, version2 } = resolveComparisonArguments(dataProduct, comparison, comparisonDataProductName);
+  return version1 > version2 && dataProduct1 === dataProduct2;
 }
 
-export function isLessOrEqualThanVersion(dataProduct: DataProduct, versionToCompare: string | number, dataProductName?: string): boolean {
-  return dataProduct.version <= transformVersionToNumber(versionToCompare) && (!dataProductName || dataProduct.dataProduct === dataProductName);
+/**
+ *
+ * @param dataProduct argument can be a string representing the version, number as calculated version value or an object with version and data product name
+ * @param comparison argument can be a string representing the version, number as calculated version value or an object with version and data product name
+ * @param comparisonDataProductName optional data product name to use for comparison if comparison is a string or number
+ * @returns
+ */
+export function isGreaterOrEqualThanVersion(dataProduct: ComparisonArgument, comparison: ComparisonArgument, comparisonDataProductName?: DataProductName): boolean {
+  const { dataProduct1, version1, dataProduct2, version2 } = resolveComparisonArguments(dataProduct, comparison, comparisonDataProductName);
+  return version1 >= version2 && dataProduct1 === dataProduct2;
 }
 
-export function isEqualToVersion(dataProduct: DataProduct, versionToCompare: string | number, dataProductName?: string): boolean {
-  return dataProduct.version === transformVersionToNumber(versionToCompare) && (!dataProductName || dataProduct.dataProduct === dataProductName);
+/**
+ *
+ * @param dataProduct argument can be a string representing the version, number as calculated version value or an object with version and data product name
+ * @param comparison argument can be a string representing the version, number as calculated version value or an object with version and data product name
+ * @param comparisonDataProductName optional data product name to use for comparison if comparison is a string or number
+ * @returns
+ */
+export function isLessThanVersion(dataProduct: ComparisonArgument, comparison: ComparisonArgument, comparisonDataProductName?: DataProductName): boolean {
+  const { dataProduct1, version1, dataProduct2, version2 } = resolveComparisonArguments(dataProduct, comparison, comparisonDataProductName);
+  return version1 < version2 && dataProduct1 === dataProduct2;
+}
+
+/**
+ *
+ * @param dataProduct argument can be a string representing the version, number as calculated version value or an object with version and data product name
+ * @param comparison argument can be a string representing the version, number as calculated version value or an object with version and data product name
+ * @param comparisonDataProductName optional data product name to use for comparison if comparison is a string or number
+ * @returns
+ */
+export function isLessOrEqualThanVersion(dataProduct: ComparisonArgument, comparison: ComparisonArgument, comparisonDataProductName?: DataProductName): boolean {
+  const { dataProduct1, version1, dataProduct2, version2 } = resolveComparisonArguments(dataProduct, comparison, comparisonDataProductName);
+  return version1 <= version2 && dataProduct1 === dataProduct2;
+}
+
+/**
+ *
+ * @param dataProduct argument can be a string representing the version, number as calculated version value or an object with version and data product name
+ * @param comparison argument can be a string representing the version, number as calculated version value or an object with version and data product name
+ * @param comparisonDataProductName optional data product name to use for comparison if comparison is a string or number
+ * @returns
+ */
+export function isEqualToVersion(dataProduct: ComparisonArgument, comparison: ComparisonArgument, comparisonDataProductName?: DataProductName): boolean {
+  const { dataProduct1, version1, dataProduct2, version2 } = resolveComparisonArguments(dataProduct, comparison, comparisonDataProductName);
+  return version1 === version2 && dataProduct1 === dataProduct2;
 }

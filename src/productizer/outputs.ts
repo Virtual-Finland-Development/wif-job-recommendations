@@ -1,4 +1,5 @@
 import { Input, parse } from "valibot";
+import { DataProductName } from "../app/data-products";
 import { isGreaterOrEqualThanVersion, isLessOrEqualThanVersion } from "../app/versions";
 import DataProduct from "../models/DataProduct";
 import { ForeignerJobRecommendationsRequest } from "../models/ForeignerJobRecommendationsRequest";
@@ -19,10 +20,11 @@ export async function mapJiFRecommendationsResponseToForeignerResponse(
 ) {
   let mappedJobs = await Promise.all(
     response.records.map(async (job) => {
-      const city = isLessOrEqualThanVersion(dataProduct, "1.1", "/Employment/ForeignerJobRecommendatations") ? job.location.city || job.employer.location.city : job.location.city;
+      const city = isLessOrEqualThanVersion(dataProduct, "1.1", DataProductName.ForeignerJobRecommendatations)
+        ? job.location.city || job.employer.location.city
+        : job.location.city;
       const employerLogoUrlHasNoFallback =
-        isGreaterOrEqualThanVersion(dataProduct, "0.2", "/Employment/ForeignerJobRecommendations") ||
-        isGreaterOrEqualThanVersion(dataProduct, "1.3", "/Employment/ForeignerJobRecommendatations");
+        isGreaterOrEqualThanVersion(dataProduct, "0.2") || isGreaterOrEqualThanVersion(dataProduct, "1.3", DataProductName.ForeignerJobRecommendatations);
       return {
         title: job.title,
         score: job.score,
@@ -40,7 +42,7 @@ export async function mapJiFRecommendationsResponseToForeignerResponse(
     let isVisible = true;
 
     // Filter out jobs without municipality code (<= v1.1)
-    if (isVisible && isLessOrEqualThanVersion(dataProduct, "1.1", "/Employment/ForeignerJobRecommendatations") && !job.municipalityCode) {
+    if (isVisible && isLessOrEqualThanVersion(dataProduct, "1.1", DataProductName.ForeignerJobRecommendatations) && !job.municipalityCode) {
       isVisible = false;
     }
 

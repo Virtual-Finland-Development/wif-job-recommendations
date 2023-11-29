@@ -1,5 +1,6 @@
 import { describe, expect, test } from "@jest/globals";
-import { isGreaterOrEqualThanVersion, isGreaterThanVersion, isLessOrEqualThanVersion, isLessThanVersion, parseDataProductVersionText } from "./versions";
+import { parseDataProductVersionText } from "./data-products";
+import { isGreaterOrEqualThanVersion, isGreaterThanVersion, isLessOrEqualThanVersion, isLessThanVersion } from "./versions";
 
 describe("Test version comparison", () => {
   test("Greater than", () => {
@@ -21,6 +22,7 @@ describe("Test parsers", () => {
   test("Parse version from path", () => {
     expect(parseDataProductVersionText("/Employment/ForeignerJobRecommendations_v1.2.3")).toBe("1.2.3");
     expect(parseDataProductVersionText("/Employment/ForeignerJobRecommendatations_v1.2.3")).toBe("1.2.3");
-    expect(parseDataProductVersionText("/Employment/Foreigner_v1.2.3")).toBe(undefined);
+    expect(parseDataProductVersionText("/Employment/ForeignerJobRecommendations__v1.2.3")).toBe(undefined);
+    expect(parseDataProductVersionText("/Employment/ForeignerJobRecommendations_v1.2.3_extra")).toBe(undefined);
   });
 });

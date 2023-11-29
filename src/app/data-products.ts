@@ -3,6 +3,12 @@ import DataProduct from "../models/DataProduct";
 import { BadRequestExcetion } from "./exceptions";
 import { transformVersionToNumber } from "./versions";
 
+export enum DataProductName {
+  ForeignerJobRecommendatations = "/Employment/ForeignerJobRecommendatations",
+  ForeignerJobRecommendations = "/Employment/ForeignerJobRecommendations",
+  Default = "/Employment/ForeignerJobRecommendations",
+}
+
 /**
  *
  * @param event
@@ -17,9 +23,13 @@ export function parseDataProductFromEvent(event: APIGatewayProxyEventV2): DataPr
  * @param path
  * @returns
  */
-export function parseDataProductFromPath(path: string): DataProduct {
-  const fullDataProduct = parseFullDataProductName(path);
+export function parseDataProductFromPath(fullDataProduct: string): DataProduct {
+  validateFullDataProductName(fullDataProduct);
   const dataProductVersionText = parseDataProductVersionText(fullDataProduct);
+  if (!dataProductVersionText) {
+    throw new BadRequestExcetion("Missing data product version from the URI path");
+  }
+
   const dataProductVersion = transformVersionToNumber(dataProductVersionText);
   if (!fullDataProduct.endsWith(`_v${dataProductVersionText}`)) {
     throw new BadRequestExcetion("Invalid data product path format");
@@ -40,11 +50,10 @@ export function parseDataProductFromPath(path: string): DataProduct {
  * @param path
  * @returns
  */
-export function parseFullDataProductName(path: string): string {
+export function validateFullDataProductName(path: string) {
   if (path.indexOf("/") !== 0 || !path.includes("_v")) {
     throw new BadRequestExcetion("Invalid data product path");
   }
-  return path;
 }
 
 /**
@@ -53,9 +62,5 @@ export function parseFullDataProductName(path: string): string {
  * @returns
  */
 export function parseDataProductVersionText(path: string) {
-  const versionText = path.match(/_v([\d\.]+)/)?.[1];
-  if (!versionText) {
-    throw new BadRequestExcetion("Missing data product version from the URI path");
-  }
-  return versionText;
+  return path.match(/[a-zA-Z0-9]_v([\d\.]+)$/)?.[1];
 }
