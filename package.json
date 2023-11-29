@@ -4,6 +4,7 @@
   "description": "Productizer for job recommendations data product",
   "scripts": {
     "build": "tsc",
+    "predeploy": "npm test",
     "deploy": "npm run build && pulumi -C infra up",
     "test": "jest"
   },
